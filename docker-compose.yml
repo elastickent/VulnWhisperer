@@ -5,6 +5,7 @@ services:
     container_name: elasticsearch
     environment:
       - cluster.name=vulnwhisperer
+      - discovery.type=single-node
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
       - xpack.security.enabled=false
@@ -49,7 +50,7 @@ services:
     volumes:
       - ./resources/elk6/init_kibana.sh:/opt/init_kibana.sh
       - ./resources/elk6/kibana_APIonly.json:/opt/kibana_APIonly.json
-      - ./resources/elk6/logstash-vulnwhisperer-template.json:/opt/index-template.json
+      - ./resources/elk6/logstash-vulnwhisperer-template_elk7.json:/opt/index-template.json
     command: sh -c "apk add --no-cache curl bash && chmod +x /opt/init_kibana.sh && chmod +r /opt/kibana_APIonly.json && cd /opt/ && /bin/bash /opt/init_kibana.sh" # /opt/kibana_APIonly.json"
     networks:
       esnet:
@@ -75,7 +76,7 @@ services:
           - logstash.local
   vulnwhisperer:
     # image: hasecuritysolutions/vulnwhisperer:latest
-    image: vulnwhisperer-local
+    image: hasecuritysolutions/vulnwhisperer:latest
     container_name: vulnwhisperer
     entrypoint: [
                   "vuln_whisperer",
